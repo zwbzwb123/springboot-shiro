@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.UserMapper">
+
+    <select id="selectUserByName" parameterType="String" resultType="user">
+        select * from user where username = #{value}
+    </select>
+
+    <select id="selectUserRoles" parameterType="String" resultType="role">
+        SELECT * from role where id in ( SELECT role_id from user_role where user_id in( select id from user where username = #{value }))
+    </select>
+
+    <select id="selectUserPermissions" parameterType="String" resultType="permission">
+        SELECT p.* from permission p,role r,role_permission rp, user u,user_role ur
+        where
+        u.username = #{value }
+        and u.id = ur.user_id
+        and ur.role_id = r.id
+        and r.id = rp.role_id
+        and p.id = rp.permission_id
+    </select>
+
+</mapper>
